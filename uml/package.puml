@@ -1,0 +1,31 @@
+@startuml package
+' Biểu đồ gói – API cổng (layered + ECB). Mũi tên = phụ thuộc
+package "web (React)" as web
+package "api" {
+  package "routers (Boundary)" as routers
+  package "services (Control)" as services
+  package "domain (Entity)" as domain
+  package "repositories" as repos
+  package "clients" as clients
+  package "messaging" as messaging
+}
+package "Bên ngoài" {
+  component "Trino / DuckDB" as trino
+  component "PostgreSQL app" as pg
+  component "mining-service" as mining
+  component "search-service" as search
+  component "Kafka" as kafka
+}
+web ..> routers : HTTP/JSON
+routers ..> services
+services ..> domain
+services ..> repos
+services ..> clients
+services ..> messaging
+repos ..> domain
+repos ..> trino
+repos ..> pg
+clients ..> mining
+clients ..> search
+messaging ..> kafka
+@enduml

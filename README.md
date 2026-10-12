@@ -1,6 +1,6 @@
 # PTTKHT-joblens (joblens-app)
 
-Cổng JobLens VN (API + UI) cho người tìm việc, nhà tuyển dụng/chuyên viên phân tích và quản trị dữ liệu, kèm toàn bộ tài liệu phân tích thiết kế theo khung báo cáo 7 chương.
+Cổng JobLens VN (API + UI) giúp **người tìm việc IT** tìm việc hợp kỹ năng, biết nên học thêm gì và biết công ty có đáng vào không; kèm toàn bộ tài liệu phân tích thiết kế theo khung báo cáo 7 chương. Phạm vi: [Blueprint hệ thống](https://github.com/BD-WM-SA-D/joblens/blob/main/docs/project-plan/14-blueprint-he-thong.md).
 
 > **Phạm vi đánh giá – môn Phân tích thiết kế hệ thống (IT3120, học kỳ 20261)**
 >
@@ -47,6 +47,17 @@ docs/adr/            ADR phía ứng dụng
 ```
 
 ## Tài liệu
+
+| Nội dung | File |
+|---|---|
+| Persona | [`requirements/personas.md`](requirements/personas.md) |
+| Ca sử dụng, actor, quan hệ, gói | [`requirements/use-cases.md`](requirements/use-cases.md) |
+| Đặc tả UC | [`requirements/uc/`](requirements/uc/) |
+| User story + tiêu chí chấp nhận | [`requirements/user-stories.md`](requirements/user-stories.md) |
+| Yêu cầu phi chức năng | [`requirements/nfr.md`](requirements/nfr.md) |
+| Sơ đồ UML (PlantUML) | [`uml/`](uml/) |
+| Kịch bản chấp nhận | [`tests/acceptance/`](tests/acceptance/) |
+| Nhật ký Human-AI | [`docs/ai-log.md`](docs/ai-log.md) |
 
 - Báo cáo môn: [`docs/`](docs/)
 - Quyết định kiến trúc: [`docs/adr/`](docs/adr/)

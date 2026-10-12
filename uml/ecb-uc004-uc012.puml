@@ -1,0 +1,70 @@
+@startuml ecb-uc004-uc012
+' Biểu đồ lớp phân tích (ECB) cho UC004 Lập hồ sơ kỹ năng và UC012 Nhận gợi ý việc làm
+class ProfilePage <<boundary>>
+class RecoPage <<boundary>>
+class ProfileRouter <<boundary>> {
+  +extract(text): List<SkillCandidate>
+  +getSkills(): List<KyNang>
+  +putSkills(skillIds)
+}
+class RecoRouter <<boundary>> {
+  +getRecommendations(k): List<GoiYViecLam>
+}
+class ProfileService <<control>> {
+  +extractSkills(text): List<SkillCandidate>
+  +saveProfile(userId, skillIds)
+  +getProfile(userId): HoSoKyNang
+}
+class RecommendationService <<control>> {
+  -strategy: RecommendationStrategy
+  +recommend(userId, k): List<GoiYViecLam>
+}
+interface RecommendationStrategy {
+  +rank(skillIds, k, filters): List<GoiYViecLam>
+}
+class ModelStrategy <<control>>
+class SkillOverlapStrategy <<control>>
+interface MiningClient {
+  +extract(text): List<SkillCandidate>
+  +recommend(skillIds, k, filters): List<GoiYViecLam>
+}
+class HttpMiningClient
+class DictionaryMiningClient
+interface ProfileRepository {
+  +get(userId): HoSoKyNang
+  +save(profile)
+}
+interface JobRepository {
+  +findByUids(uids): List<TinTuyenDung>
+  +countSkillOverlap(skillIds, k): List<GoiYViecLam>
+}
+class HoSoKyNang <<entity>>
+class KyNang <<entity>>
+class GoiYViecLam <<entity>>
+class TinTuyenDung <<entity>>
+class SkillCandidate <<entity>> {
+  skill_id
+  surface_form
+  confidence
+}
+
+ProfilePage --> ProfileRouter
+RecoPage --> RecoRouter
+ProfileRouter --> ProfileService
+RecoRouter --> RecommendationService
+ProfileService --> MiningClient
+ProfileService --> ProfileRepository
+RecommendationService --> ProfileRepository
+RecommendationService --> RecommendationStrategy
+RecommendationService --> JobRepository
+ModelStrategy ..|> RecommendationStrategy
+SkillOverlapStrategy ..|> RecommendationStrategy
+ModelStrategy --> MiningClient
+SkillOverlapStrategy --> JobRepository
+HttpMiningClient ..|> MiningClient
+DictionaryMiningClient ..|> MiningClient
+ProfileRepository ..> HoSoKyNang
+HoSoKyNang o-- KyNang
+GoiYViecLam --> TinTuyenDung
+MiningClient ..> SkillCandidate
+@enduml

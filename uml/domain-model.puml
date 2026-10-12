@@ -1,0 +1,72 @@
+@startuml domain-model
+' Mô hình miền (chương 2–3). Thuộc tính rút gọn; kiểu dữ liệu chi tiết ở uml/ecb-*.puml
+hide methods
+class NguoiDung {
+  user_id
+  email
+  vai_tro
+  ngay_tao
+}
+class HoSoKyNang {
+  cap_nhat_luc
+}
+class KyNang {
+  skill_id
+  nhan
+  esco_uri
+}
+class TinTuyenDung {
+  job_uid
+  nguon
+  tieu_de
+  luong_min_vnd
+  luong_max_vnd
+  cap_bac
+  han_nop
+  trang_thai
+}
+class NhomTinTrung {
+  dup_group_id
+}
+class DiaDiem {
+  ma_tinh
+  ten
+}
+class CongTy {
+  company_key
+  ten
+}
+class DanhGiaKhiaCanh {
+  khia_canh
+  so_cau
+  ti_le_tich_cuc
+  ti_le_tieu_cuc
+}
+class GoiYViecLam {
+  diem
+  ky_nang_khop
+  ky_nang_thieu
+}
+class DangKyCanhBao {
+  subscription_id
+  trang_thai
+}
+class ThongBao {
+  da_doc
+  tao_luc
+}
+
+NguoiDung "1" -- "0..1" HoSoKyNang
+HoSoKyNang "*" -- "1..50" KyNang : gồm >
+TinTuyenDung "*" -- "*" KyNang : yêu cầu >
+TinTuyenDung "*" -- "1" CongTy : đăng bởi >
+TinTuyenDung "*" -- "0..1" NhomTinTrung : thuộc >
+TinTuyenDung "*" -- "*" DiaDiem : làm việc tại >
+CongTy "1" -- "0..6" DanhGiaKhiaCanh : được đánh giá >
+GoiYViecLam "*" -- "1" HoSoKyNang : cho >
+GoiYViecLam "*" -- "1" TinTuyenDung : đề xuất >
+NguoiDung "1" -- "0..3" DangKyCanhBao : tạo >
+DangKyCanhBao "1" -- "1" HoSoKyNang : theo dõi >
+DangKyCanhBao "1" -- "*" ThongBao : sinh ra >
+ThongBao "*" -- "1" TinTuyenDung : về >
+@enduml

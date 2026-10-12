@@ -1,0 +1,15 @@
+@startuml state-tin-tuyen-dung
+' Máy trạng thái TinTuyenDung (suy ra từ is_active, last_seen_ts, deadline của silver.job_postings)
+[*] --> Moi : crawl lần đầu
+state "Mới" as Moi
+state "Đang mở" as DangMo
+state "Đã đóng" as DaDong
+state "Hết hạn" as HetHan
+Moi --> DangMo : vào silver (is_active = true)
+DangMo --> DangMo : crawl lại, nội dung đổi\n[content_hash khác]
+DangMo --> DaDong : không còn trên trang nguồn\n[is_active = false]
+DangMo --> HetHan : qua deadline
+DaDong --> DangMo : xuất hiện lại trên trang nguồn
+DaDong --> [*]
+HetHan --> [*]
+@enduml

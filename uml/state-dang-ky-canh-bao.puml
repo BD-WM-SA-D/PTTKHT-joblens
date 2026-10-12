@@ -1,0 +1,13 @@
+@startuml state-dang-ky-canh-bao
+' Máy trạng thái DangKyCanhBao (UC006)
+state "Đang bật" as Active
+state "Tạm dừng" as Paused
+state "Đã xóa" as Deleted
+[*] --> Active : thành viên bật cảnh báo
+Active --> Paused : tạm dừng
+Paused --> Active : bật lại
+Active --> Active : sửa hồ sơ kỹ năng / phát lại đăng ký
+Active --> Deleted : xóa
+Paused --> Deleted : xóa
+Deleted --> [*]
+@enduml

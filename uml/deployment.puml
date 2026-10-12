@@ -1,0 +1,51 @@
+@startuml deployment
+' Biểu đồ triển khai (ký pháp UML). Phần nền tảng dữ liệu chỉ vẽ ở mức node, chi tiết thuộc báo cáo BD (R5)
+node "Máy người dùng" {
+  node "Trình duyệt" {
+    artifact "joblens-web (SPA)" as spa
+  }
+}
+node "Cụm Kubernetes (k3d)" {
+  node "namespace serving" {
+    node "pod joblens-web" {
+      artifact "nginx + bundle React" as webart
+    }
+    node "pod joblens-api" {
+      artifact "FastAPI app" as apiart
+    }
+    node "pod alert-consumer" {
+      artifact "AlertConsumer" as consart
+    }
+    node "pod postgres-app" {
+      database "schema app" as pgart
+    }
+    node "pod mining-service" {
+      artifact "image WM (mining)" as miningart
+    }
+    node "pod search-service (tùy chọn)" {
+      artifact "image WM (search)" as searchart
+    }
+    node "Trino" as trino
+  }
+  node "namespace ingest" {
+    node "Kafka (Strimzi)" as kafka
+  }
+}
+spa --> webart : HTTPS
+spa --> apiart : HTTPS/JSON
+apiart --> pgart : TCP 5432
+apiart --> trino : HTTP (trino-python-client)
+apiart --> miningart : HTTP/JSON
+apiart --> searchart : HTTP/JSON
+apiart --> kafka : produce app.alert_subscriptions.v1
+consart --> kafka : consume alerts.job_match.v1
+consart --> pgart : TCP 5432
+
+node "Chế độ local (docker compose)" {
+  artifact "api + web" as localapp
+  database "postgres" as localpg
+  artifact "DuckDB gold mẫu" as duck
+}
+localapp --> localpg
+localapp --> duck
+@enduml

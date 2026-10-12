@@ -1,0 +1,26 @@
+@startuml seq-uc001
+' Trình tự: tìm kiếm việc làm (UC001), có đường lùi về Trino
+actor "Khách" as U
+boundary "SearchPage" as W
+boundary "JobsRouter" as R
+control "SearchService" as S
+participant "SearchClient" as SC
+participant "search-service\n(WM, tùy chọn)" as SS
+database "Trino (BD)" as T
+
+U -> W : nhập từ khóa + bộ lọc
+W -> R : GET /api/jobs?q=&location=&level=
+R -> R : kiểm tra đầu vào
+R -> S : search(query, filters)
+S -> SC : search(query, filters)
+alt có JOBLENS_SEARCH_URL và /health ổn
+  SC -> SS : GET /search
+  SS --> SC : [job_uid, score] (đã gộp nhóm trùng)
+else đường lùi
+  SC -> T : truy vấn tiêu đề/mô tả, lọc is_active
+  SC -> SC : gộp theo dup_group_id
+end
+S -> T : lấy chi tiết + số trang đăng mỗi nhóm
+S --> R : List<TinTuyenDung>
+R --> W : 200 kết quả (20/trang)
+@enduml

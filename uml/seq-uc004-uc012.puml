@@ -1,0 +1,47 @@
+@startuml seq-uc004-uc012
+' Trình tự: dán CV → trích kỹ năng → lưu → gợi ý (UC004 + UC012), có đường lùi
+actor "Thành viên" as U
+boundary "ProfilePage /\nRecoPage" as W
+boundary "ProfileRouter /\nRecoRouter" as R
+control "ProfileService" as PS
+control "RecommendationService" as RS
+participant "MiningClient" as MC
+participant "mining-service\n(WM)" as M
+database "PostgreSQL app" as DB
+database "Trino (BD)" as T
+
+U -> W : dán CV, bấm "Trích kỹ năng"
+W -> R : POST /api/profile/skills/extract {text}
+R -> PS : extractSkills(text)
+PS -> MC : extract(text)
+MC -> M : POST /v1/skills:extract
+alt trả lời trong 3 giây
+  M --> MC : skills, model_version
+else lỗi hoặc quá hạn
+  MC -> T : SELECT skill_id, label, aliases FROM gold.dim_skill
+  MC -> MC : so khớp từ điển (chế độ đơn giản)
+end
+MC --> PS : List<SkillCandidate>
+PS --> R : đề xuất (văn bản bị bỏ, không lưu)
+R --> W : 200 danh sách đề xuất
+U -> W : chọn/bỏ, thêm tay, bấm "Lưu"
+W -> R : PUT /api/profile/skills [skill_id]
+R -> PS : saveProfile(userId, skillIds)
+PS -> DB : UPSERT skill_profile, profile_skill
+R --> W : 200
+
+U -> W : mở trang Gợi ý
+W -> R : GET /api/recommendations?k=10
+R -> RS : recommend(userId, 10)
+RS -> DB : lấy hồ sơ kỹ năng
+alt mining-service sẵn sàng (ModelStrategy)
+  RS -> MC : recommend(skillIds, 10)
+  MC -> M : POST /v1/recommend
+  M --> MC : items[job_uid, score, matched, missing]
+else SkillOverlapStrategy
+  RS -> T : đếm kỹ năng trùng trên silver.job_skills (tin đang mở)
+end
+RS -> T : lấy chi tiết tin (silver.job_postings, job_dedup)
+RS --> R : List<GoiYViecLam>
+R --> W : 10 tin + kỹ năng khớp/thiếu
+@enduml

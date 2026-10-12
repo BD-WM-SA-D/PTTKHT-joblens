@@ -1,0 +1,65 @@
+@startuml use-case
+' Biểu đồ ca sử dụng – cổng JobLens. Phạm vi: requirements/use-cases.md
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Khách" as Guest
+actor "Thành viên" as Member
+actor "Quản trị dữ liệu" as Admin
+actor "Nền tảng dữ liệu\nJobLens" as Platform <<system>>
+actor "Dịch vụ khai phá" as Mining <<system>>
+Member -|> Guest
+
+rectangle "Cổng JobLens" {
+  package "Tìm việc" {
+    usecase "UC001 Tìm kiếm việc làm" as UC001
+    usecase "UC011 Xem chi tiết tin" as UC011
+  }
+  package "Hồ sơ và gợi ý" {
+    usecase "UC004 Lập hồ sơ kỹ năng" as UC004
+    usecase "Trích kỹ năng từ văn bản" as Extract
+    usecase "UC012 Nhận gợi ý việc làm" as UC012
+    usecase "Lấy hồ sơ kỹ năng" as GetProfile
+    usecase "UC013 Xem khoảng trống kỹ năng" as UC013
+    usecase "UC006 Đăng ký và nhận cảnh báo" as UC006
+  }
+  package "Thông tin thị trường" {
+    usecase "UC005 Xem đánh giá công ty" as UC005
+    usecase "Tóm tắt review công ty" as Summary
+    usecase "UC002 Xem xu hướng kỹ năng" as UC002
+    usecase "UC003 So sánh lương (P2)" as UC003
+  }
+  package "Tài khoản" {
+    usecase "UC010 Đăng ký / đăng nhập" as UC010
+  }
+  package "Quản trị" {
+    usecase "UC009 Xem tình trạng dữ liệu" as UC009
+  }
+}
+
+Guest --> UC001
+Guest --> UC005
+Guest --> UC002
+Guest --> UC003
+Guest --> UC010
+Member --> UC004
+Member --> UC012
+Member --> UC006
+Admin --> UC009
+
+UC011 .> UC001 : <<extend>>
+UC011 ..> Summary : <<include>>
+UC005 ..> Summary : <<include>>
+UC004 ..> Extract : <<include>>
+UC012 ..> GetProfile : <<include>>
+UC013 .> UC012 : <<extend>>
+UC006 .> UC012 : <<extend>>
+
+Extract --> Mining
+UC012 --> Mining
+UC001 --> Platform
+UC002 --> Platform
+UC005 --> Platform
+UC006 --> Platform
+UC009 --> Platform
+@enduml

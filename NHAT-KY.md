@@ -2,6 +2,13 @@
 
 Chỉ ghi sự kiện đáng nhớ: đổi hợp đồng hoặc file cấu hình chung, ghép hệ thống, chốt số liệu, quyết định quan trọng. Việc thường ngày đã có lịch sử git. Mục mới đặt trên cùng, vài dòng là đủ – xem [repo-routing](https://github.com/BD-WM-SA-D/joblens/blob/main/docs/repo-routing.md), mục Nhật ký.
 
+## 2026-10-12 · Hoang Le
+
+- Chốt phạm vi theo [Blueprint hệ thống](https://github.com/BD-WM-SA-D/joblens/blob/main/docs/project-plan/14-blueprint-he-thong.md) (đề xuất): persona sinh viên/fresher IT; UC thu hẹp (bỏ UC007, UC008; thêm UC011, UC012, UC013); gợi ý trực tuyến qua `mining-service` (ADR 0002 của joblens).
+- Tạo: `requirements/` (persona, danh sách UC, 10 đặc tả UC, user story, NFR), `uml/` (10 sơ đồ PlantUML), `docs/adr/0001-cong-nghe-cong.md`, `docs/adr/0002-khong-luu-van-ban-cv.md`, `docs/ai-log.md`, `tests/acceptance/*.feature` (P0). Sửa `README.md`; `AGENTS.md` đồng bộ từ joblens (CSDL ứng dụng, `mining.v1`).
+- Ảnh hưởng repo khác: dùng hợp đồng mới `schemas/api/mining.v1.yaml`, cột `gold.dim_skill.aliases`, `silver.review_aspects.sentence_text`, bảng `gold.data_status` (joblens, draft).
+- AI: Claude Code (Claude Opus 5.5) – soạn toàn bộ nháp; <người kiểm tra> đã kiểm tra
+
 ## 2026-10-02 · Hoang Le · chưa có PR
 
 - **Tạo:** –

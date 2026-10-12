@@ -1,0 +1,28 @@
+@startuml seq-uc006
+' Trình tự: đăng ký và nhận cảnh báo tin mới (UC006) – bất đồng bộ qua Kafka (Observer/pub-sub)
+actor "Thành viên" as U
+boundary "AlertsRouter" as R
+control "AlertService" as A
+database "PostgreSQL app" as DB
+queue "Kafka (BD)" as K
+participant "Job streaming\nghép cảnh báo (BD)" as S
+control "AlertConsumer" as C
+
+U -> R : POST /api/alerts {profile, location?}
+R -> A : subscribe(userId, profileId)
+A -> DB : INSERT alert_subscription (active)
+A -> K : publish app.alert_subscriptions.v1
+R --> U : 201 đã bật
+
+... tin mới vào jobs.raw.* ...
+S -> K : đọc jobs.raw.*, app.alert_subscriptions.v1
+S -> S : ghép theo kỹ năng, địa điểm
+S -> K : publish alerts.job_match.v1
+K -> C : poll alerts.job_match.v1
+C -> DB : đã có thông báo cho (user, dup_group_id)?
+alt chưa có
+  C -> DB : INSERT notification (chưa đọc)
+end
+U -> R : GET /api/notifications
+R --> U : danh sách thông báo
+@enduml
